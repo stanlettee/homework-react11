@@ -18,14 +18,26 @@ export default class App extends Component {
     }));
   }
 
+  handleChange = (name) => {
+    this.setState({filter: name});
+  }
+
+  checkboxCompleted = (id) => {
+    this.setState(prevState => ({
+      todos: prevState.todos.map(todo => todo.id === id ? { ...todo, completed: !todo.completed } : todo)
+    }))
+  }
+
+
   render() {
-    const finishedTodos = this.state.todos.map(todo => todo.completed)
-    return <>
-        <Info allTodos={this.state.todos.length} finishedTodos={finishedTodos}/>
+    const visibleTodos = this.state.todos.filter(todo => todo.text.toLowerCase().includes(this.state.filter.toLowerCase()));
+    const finishedTodos = this.state.todos.filter(todo => todo.completed === true)
+    return <div className="container">
+        <Info allTodos={this.state.todos.length} finishedTodos={finishedTodos.length}/>
         <TodoEditor />
-        <Filter />
-        <TodoList todos={this.state.todos} deleteTodo={this.deleteTodo}/>
-    </>
+        <Filter value={this.state.filter} handleChange={this.handleChange}/>
+        <TodoList checkboxCompleted={this.checkboxCompleted} todos={visibleTodos} deleteTodo={this.deleteTodo}/>
+    </div>
   }
 }
 
